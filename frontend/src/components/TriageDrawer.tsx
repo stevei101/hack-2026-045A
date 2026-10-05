@@ -5,15 +5,22 @@ type Props = {
   incidents: IncidentCard[];
   selectedId: string | null;
   onSelect: (incident: IncidentCard) => void;
+  embedded?: boolean;
 };
 
-export function TriageDrawer({ incidents, selectedId, onSelect }: Props) {
+export function TriageDrawer({ incidents, selectedId, onSelect, embedded = false }: Props) {
   const ranked = sortIncidents(incidents);
   const unmapped = ranked.filter((item) => !isMapped(item));
   const mapped = ranked.filter((item) => isMapped(item));
 
   return (
-    <aside className="flex h-full min-h-0 flex-col border-l border-[#243049] bg-[#0b1220]/95 backdrop-blur">
+    <aside
+      className={
+        embedded
+          ? "flex min-h-0 flex-1 flex-col border-t border-[#243049] bg-transparent"
+          : "flex h-full min-h-0 flex-col border-l border-[#243049] bg-[#0b1220]/95 backdrop-blur"
+      }
+    >
       <div className="border-b border-[#243049] px-4 py-4">
         <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-teal-300">Triage queue</p>
         <h2 className="mt-1 text-lg font-semibold text-white">Active hazards</h2>

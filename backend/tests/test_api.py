@@ -35,10 +35,27 @@ def test_accepts_png_bytes_in_memory() -> None:
     response = client.post(
         "/api/v1/hazards/report",
         data={"raw_text": "Transformer flashover near Braker Lane"},
-        files={"image": ("pole.png", b"\\x89PNG\r\n\\x1a\n", "image/png")},
+        files={"image": ("pole.png", b"\x89PNG\r\n\x1a\n", "image/png")},
     )
     assert response.status_code == 200
     assert response.json()["image_attached"] is True
+
+
+def test_frontend_hud_does_not_invent_coordinates() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    for relative in (
+        "frontend/src/App.tsx",
+        "frontend/src/components/CartoBaseline.tsx",
+        "frontend/src/components/IncidentBanner.tsx",
+        "frontend/src/banner.ts",
+        "frontend/src/carto.ts",
+    ):
+        text = (root / relative).read_text()
+        assert "30.4515" not in text
+        assert "30.3150" not in text
+        assert "YOUR_PUBLIC_MAP_UUID" not in text
 
 
 def test_demo_pins_are_listed() -> None:

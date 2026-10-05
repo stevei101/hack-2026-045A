@@ -1,4 +1,4 @@
-import type { IncidentCard } from "./types";
+import type { Austin311Context, Category, IncidentCard } from "./types";
 
 export class ApiError extends Error {
   status?: number;
@@ -16,6 +16,23 @@ export async function listIncidents(): Promise<IncidentCard[]> {
     throw new ApiError("Incident feed is unavailable.", response.status);
   }
   return (await response.json()) as IncidentCard[];
+}
+
+export async function fetchAustin311Context(args: {
+  category: Category;
+  lat: number | null;
+  lng: number | null;
+}): Promise<Austin311Context> {
+  const params = new URLSearchParams({ category: args.category });
+  if (args.lat != null && args.lng != null) {
+    params.set("lat", String(args.lat));
+    params.set("lng", String(args.lng));
+  }
+  const response = await fetch(`/api/v1/austin311/context?${params.toString()}`);
+  if (!response.ok) {
+    throw new ApiError("Austin 311 context is unavailable.", response.status);
+  }
+  return (await response.json()) as Austin311Context;
 }
 
 export async function reportHazard(form: FormData): Promise<IncidentCard> {
