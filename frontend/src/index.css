@@ -1,0 +1,92 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #070b14;
+  --panel: #101827;
+  --panel-2: #162033;
+  --line: #243049;
+  --text: #d7e0ef;
+  --muted: #8b9bb3;
+  --critical: #ef4444;
+  --high: #f97316;
+  --moderate: #f59e0b;
+  --low: #3b82f6;
+  --signal: #5eead4;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+}
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  background: #0b1220;
+  font-family: inherit;
+}
+
+.leaflet-control-attribution {
+  background: rgba(7, 11, 20, 0.78) !important;
+  color: #8b9bb3 !important;
+}
+
+.pin {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px rgba(7, 11, 20, 0.7);
+}
+
+.pin-CRITICAL {
+  background: var(--critical);
+  animation: pulse-critical 1.6s ease-out infinite;
+}
+
+.pin-HIGH {
+  background: var(--high);
+}
+
+.pin-MODERATE {
+  background: var(--moderate);
+}
+
+.pin-LOW {
+  background: var(--low);
+}
+
+.pin-selected {
+  outline: 2px solid #f8fafc;
+  outline-offset: 3px;
+}
+
+@keyframes pulse-critical {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #2a3a55;
+  border-radius: 999px;
+}
