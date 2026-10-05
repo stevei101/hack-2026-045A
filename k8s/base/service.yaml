@@ -5,6 +5,8 @@ metadata:
   namespace: civicpulse
   labels:
     app.kubernetes.io/name: civicpulse
+  annotations:
+    civicpulse.dev/public-hostname: hack.oxidizedgraph.dev
 spec:
   type: ClusterIP
   selector:

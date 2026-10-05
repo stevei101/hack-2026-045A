@@ -1,0 +1,45 @@
+name: gitops
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  kustomize:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install kustomize
+        run: |
+          curl -sL https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.4.3/kustomize_v5.4.3_linux_amd64.tar.gz | tar xz
+          sudo mv kustomize /usr/local/bin/kustomize
+      - name: Build overlays
+        run: |
+          set -euo pipefail
+          for path in k8s/overlays/dev k8s/overlays/staging k8s/overlays/prod clusters/inert-synergies-llc; do
+            echo "==> kustomize build $path"
+            kustomize build "$path"
+          done
+
+  image:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/stevei101/hack-2026-045A:unreleased
+            ghcr.io/stevei101/hack-2026-045A:${{ github.sha }}

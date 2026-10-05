@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: civicpulse
+  namespace: civicpulse
+  labels:
+    app.kubernetes.io/name: civicpulse
+  annotations:
+    kubernetes.io/ingress.class: gce
+    civicpulse.dev/public-hostname: hack.oxidizedgraph.dev
+spec:
+  rules:
+    - host: hack.oxidizedgraph.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: civicpulse
+                port:
+                  number: 8080
