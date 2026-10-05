@@ -8,6 +8,19 @@ WarriorHacks 2.0 hazard intake for Travis and Williamson counties. A citizen fil
 
 Do not open a second repository named `civicpulse-mesh`.
 
+## API keys
+
+**None required.** The demo uses `civicpulse-heuristic` and never calls Gemini or OpenAI.
+
+| Name | Required? | Where it lives |
+| --- | --- | --- |
+| *(none)* | No | Local demo and container run without credentials |
+| `GEMINI_API_KEY` | Optional, later | Process env or Secret Manager only. Never git. |
+| `GITHUB_TOKEN` | Actions only | Provided by GitHub Actions to push `ghcr.io` images. Do not create or paste one into the repo. |
+| `MODEL_NAME` | No | Optional label override. Default `civicpulse-heuristic`. |
+
+Copy `.env.example`. Leave `GEMINI_API_KEY` commented out.
+
 ## Local demo
 
 Needs Python 3.12+, [Bun](https://bun.sh), and no API keys.
