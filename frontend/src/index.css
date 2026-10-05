@@ -29,6 +29,8 @@ body {
 }
 
 .leaflet-container {
+  position: absolute;
+  inset: 0;
   height: 100%;
   width: 100%;
   background: #0b1220;
