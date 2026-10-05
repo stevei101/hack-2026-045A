@@ -1,39 +1,47 @@
-# hack-2026-045A
+# CivicPulse Mesh · Hack 2026-045A
 
-CivicPulse Mesh manifests for GKE in GCP project `inert-synergies-llc` (organization `34571522265`).
+WarriorHacks 2.0 hazard intake for Travis and Williamson counties. A citizen files text and an optional photo; FastAPI classifies the report; the Bun/React map shows mapped pins and keeps GPS-less reports in an unmapped triage queue.
 
-GitHub is the git remote. Flux reconciles this repo. The workload is a Kustomize base plus dev, staging, and prod overlays.
+**Repo:** [github.com/stevei101/hack-2026-045A](https://github.com/stevei101/hack-2026-045A)  
+**Public hostname:** `hack.oxidizedgraph.dev` (subdomain on `oxidizedgraph.dev`; apex and `www` stay on Cloudflare Pages)  
+**Drafts:** [issue #1](https://github.com/stevei101/hack-2026-045A/issues/1) · [issue #3](https://github.com/stevei101/hack-2026-045A/issues/3)
 
-## Layout
+Do not open a second repository named `civicpulse-mesh`.
 
-```text
-k8s/base/                         namespace, service account, service, deployment
-k8s/overlays/dev/
-k8s/overlays/staging/
-k8s/overlays/prod/                path Flux applies
-clusters/inert-synergies-llc/     Flux GitRepository and Kustomization
-```
+## Local demo
 
-The prod overlay deploys namespace `civicpulse`. Dev and staging use `civicpulse-dev` and `civicpulse-staging`. The container image is `ghcr.io/stevei101/hack-2026-045A:unreleased` until the prod overlay pins a digest.
-
-## Flux
-
-There is no GKE cluster in the project yet. After one exists, install Flux from this repo:
+Needs Python 3.12+, [Bun](https://bun.sh), and no API keys.
 
 ```bash
-flux bootstrap github \
-  --owner=stevei101 \
-  --repository=hack-2026-045A \
-  --branch=main \
-  --path=clusters/inert-synergies-llc \
-  --personal
+bun install --cwd frontend
+bun run --cwd frontend build
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -e 'backend/[dev]'
+pytest backend/tests
+FRONTEND_DIST=frontend/dist PORT=43211 uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 43211
 ```
 
-Bootstrap writes the Flux controllers under `clusters/inert-synergies-llc/flux-system/`. The `civicpulse-prod` Kustomization then applies `k8s/overlays/prod`.
+Open [http://127.0.0.1:43211](http://127.0.0.1:43211).
 
-## Check the manifests
+- The map loads 10 fixed Travis/Williamson demo pins (`fallback-cache-travis-v1`). Those pins are demo data, not a stand-in for a citizen report.
+- Leave location off to confirm the API does **not** invent a Pflugerville point. Unmapped cards stay in **Unmapped incidents — needs triage**.
+- Images are optional multipart uploads. The API reads bytes in memory and never fetches `image_url`.
+- `IncidentCard.model_name` is always set (`civicpulse-heuristic` unless `MODEL_NAME` is set).
+- No secrets belong in this repository.
 
-```bash
-kustomize build k8s/overlays/prod
-kustomize build clusters/inert-synergies-llc
-```
+## Public hostname
+
+`oxidizedgraph.dev` and `www` already CNAME to Cloudflare Pages. CivicPulse uses **`hack.oxidizedgraph.dev`**.
+
+A reservation TXT lives at `_civicpulse.hack.oxidizedgraph.dev`. Do not create an A/CNAME for `hack` until a GKE Ingress address exists.
+
+## GitOps on GKE
+
+Prod namespace is `civicpulse`. Flux object `civicpulse-prod` applies `./k8s/overlays/prod` and does not set `targetNamespace`.
+
+Image: `ghcr.io/stevei101/hack-2026-045A:unreleased`, port **8080**, uid **65532**.
+
+## License
+
+Apache License 2.0. See [LICENSE](LICENSE).
