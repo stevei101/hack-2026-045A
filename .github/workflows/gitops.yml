@@ -41,5 +41,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/stevei101/hack-2026-045A:unreleased
-            ghcr.io/stevei101/hack-2026-045A:${{ github.sha }}
+            ghcr.io/stevei101/hack-2026-045a:unreleased
+            ghcr.io/stevei101/hack-2026-045a:${{ github.sha }}

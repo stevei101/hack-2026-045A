@@ -18,5 +18,5 @@ labels:
 
 # Pin a digest here before Flux applies this overlay:
 # images:
-#   - name: ghcr.io/stevei101/hack-2026-045A
+#   - name: ghcr.io/stevei101/hack-2026-045a
 #     newTag: sha256:<digest>

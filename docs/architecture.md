@@ -19,10 +19,8 @@ Citizen report (multipart text + optional image bytes)
  CARTO iframe (VITE_CARTO_MAP_URL, src never mutated)
         |
         v
- GitHub main --Flux civicpulse-prod--> GKE overlay k8s/overlays/prod
-        |
-        v
- Ingress host hack.oxidizedgraph.dev
+ hack.oxidizedgraph.dev  (Cloudflare Container today)
+ later: GitHub main --Flux civicpulse-prod--> GKE overlay k8s/overlays/prod
 ```
 
 Coordinates: a missing `reported_lat` / `reported_lng` stays null. Street names are not geocoded. Cached Travis/Williamson pins are demo data only. The CARTO embed is the Austin 311 baseline and is not updated in-process when FastAPI accepts a report.
