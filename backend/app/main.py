@@ -10,8 +10,9 @@ from fastapi.staticfiles import StaticFiles
 
 from app.agent import ALLOWED_IMAGE_TYPES, extract_incident
 from app.austin311 import query_ticket_count
+from app.carto import public_config
 from app.mock_data import demo_incidents
-from app.models import Austin311Context, Category, HazardInputPayload, IncidentCard
+from app.models import Austin311Context, CartoPublicConfig, Category, HazardInputPayload, IncidentCard
 
 FRONTEND_DIST = Path(os.environ.get("FRONTEND_DIST", Path(__file__).resolve().parents[2] / "frontend" / "dist"))
 incidents: list[IncidentCard] = demo_incidents()
@@ -57,6 +58,11 @@ def readyz() -> dict[str, str]:
 @app.get("/api/v1/incidents", response_model=list[IncidentCard])
 def list_incidents() -> list[IncidentCard]:
     return incidents
+
+
+@app.get("/api/v1/carto/config", response_model=CartoPublicConfig)
+def carto_config() -> CartoPublicConfig:
+    return public_config()
 
 
 @app.get("/api/v1/austin311/context", response_model=Austin311Context)

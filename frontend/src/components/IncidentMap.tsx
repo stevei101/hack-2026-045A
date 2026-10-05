@@ -1,6 +1,7 @@
 import L from "leaflet";
 import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { LEAFLET_TILES } from "../carto";
 import {
   AGENCY_LABEL,
   isMapped,
@@ -43,10 +44,7 @@ export function IncidentMap({ incidents, selectedId, onSelect }: Props) {
 
   return (
     <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} scrollWheelZoom className="h-full w-full">
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      />
+      <TileLayer attribution={LEAFLET_TILES.attribution} url={LEAFLET_TILES.url} />
       <FlyToSelection incident={selected} />
       {mapped.map((incident) => (
         <Marker
