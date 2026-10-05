@@ -55,3 +55,12 @@ class Austin311Context(BaseModel):
     source: str
     scope: Literal["nearby", "citywide_type", "unavailable"]
     sr_type_filter: str
+
+
+class CartoPublicConfig(BaseModel):
+    api_base_url: str
+    organization: str
+    organization_id: str
+    domain: str
+    region: str
+    token_status: Literal["missing", "present"]
