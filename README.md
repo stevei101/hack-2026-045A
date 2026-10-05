@@ -8,6 +8,19 @@ WarriorHacks 2.0 hazard intake for Travis and Williamson counties. A citizen fil
 
 Do not open a second repository named `civicpulse-mesh`.
 
+## API keys
+
+**None required.** The demo uses `civicpulse-heuristic` and never calls Gemini or OpenAI.
+
+| Name | Required? | Where it lives |
+| --- | --- | --- |
+| *(none)* | No | Local demo and container run without credentials |
+| `GEMINI_API_KEY` | Optional, later | Process env or Secret Manager only. Never git. |
+| `GITHUB_TOKEN` | Actions only | Provided by GitHub Actions to push `ghcr.io` images. Do not create or paste one into the repo. |
+| `MODEL_NAME` | No | Optional label override. Default `civicpulse-heuristic`. |
+
+Copy `.env.example`. Leave `GEMINI_API_KEY` commented out.
+
 ## Local demo
 
 Needs Python 3.12+, [Bun](https://bun.sh), and no API keys.
@@ -77,15 +90,15 @@ Create the Cloud token in Workspace → Developers → Create new API Access Tok
 6. **Allowed Referers:** leave empty. This token stays on the FastAPI process (`CARTO_API_ACCESS_TOKEN=` in an untracked `.env`). Referers are only for a browser-exposed token.
 7. Copy the token once. Put it in local `.env` or Secret Manager. Do not paste it into git, the PR, or Discord.
 
-The public iframe still needs a **Public** Builder map. The API Access Token does not replace `VITE_CARTO_MAP_URL`. `GET /api/v1/carto/config` reports `token_status` as `missing` or `present` and never returns the secret.
+The public iframe still needs a **Public** Builder map. The API Access Token does not replace `VITE_CARTO_MAP_URL`, and it must never be exposed as a `VITE_` variable.
 
 Nearby ticket copy comes from `GET /api/v1/austin311/context` against the public SODA resource `xwdj-i9he`. If SODA is down or the category has no filter, the banner omits the count. There is no hardcoded “47 nearby tickets” and no fallback pin at `30.3150, -97.7280`.
 
 ## Public hostname
 
-`oxidizedgraph.dev` and `www.oxidizedgraph.dev` already CNAME to `oxidizedgraph-dev.pages.dev`. CivicPulse uses **`hack.oxidizedgraph.dev`**.
+`oxidizedgraph.dev` and `www.oxidizedgraph.dev` stay on Cloudflare Pages (`oxidizedgraph-dev.pages.dev`). CivicPulse is live on **`hack.oxidizedgraph.dev`** as a **Cloudflare Container**.
 
-Cloudflare currently has a reservation TXT at `_civicpulse.hack.oxidizedgraph.dev`. Do not create an A/CNAME for `hack` until a GKE Ingress address exists. The Kustomize Ingress already names the host.
+Merging to `main` rebuilds the GHCR image. That does not redeploy the Cloudflare Container. Flux/GKE is the later GitOps path and is not what serves the hack subdomain today.
 
 ## GitOps on GKE
 
@@ -115,7 +128,7 @@ kustomize build k8s/overlays/prod
 kustomize build clusters/inert-synergies-llc
 ```
 
-Image: `ghcr.io/stevei101/hack-2026-045A:unreleased`, port **8080**, uid **65532**.
+Image: `ghcr.io/stevei101/hack-2026-045a:unreleased` (lowercase — GHCR rejects `hack-2026-045A`). Port **8080**, uid **65532**. The GitHub repo name can keep the capital `A`.
 
 ## Attribution & model disclosure
 
