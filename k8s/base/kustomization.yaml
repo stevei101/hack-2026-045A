@@ -6,6 +6,7 @@ resources:
   - serviceaccount.yaml
   - service.yaml
   - deployment.yaml
+  - externalsecret.yaml
 
 labels:
   - pairs:

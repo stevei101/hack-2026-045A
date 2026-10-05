@@ -1,0 +1,30 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: astral-sh/setup-uv@v5
+      - uses: azure/setup-kubectl@v4
+      - name: frontend
+        working-directory: frontend
+        run: bun install --frozen-lockfile && bun test && bun run build
+      - name: backend
+        working-directory: backend
+        run: uv run pytest -q
+      - name: rust
+        run: cargo test
+      - name: kustomize
+        run: kubectl kustomize k8s/overlays/prod && kubectl kustomize k8s/overlays/dev && kubectl kustomize k8s/overlays/staging && kubectl kustomize clusters/inert-synergies-llc
