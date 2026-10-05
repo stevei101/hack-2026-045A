@@ -1,22 +1,26 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: hack-2026-dev
 
-bases:
-- ../../
+resources:
+  - ../../base
 
-commonLabels:
-  environment: development
-  app.kubernetes.io/version: latest
+namespace: civicpulse-dev
 
-commonAnnotations:
-  config.kubernetes.io/environment: development
+patches:
+  - target:
+      kind: Namespace
+      name: civicpulse
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: civicpulse-dev
 
-# Dev uses minimal resources
-patchesStrategicMerge:
-- eso-replicas-patch.yaml
+replicas:
+  - name: civicpulse
+    count: 1
 
-namePrefix: dev-
-
-namespace: development
+labels:
+  - pairs:
+      environment: dev
+      lornu.ai/cluster: inert-synergies-llc
+    includeSelectors: false
