@@ -1,27 +1,22 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: hack-2026-prod
 
-# Reference the base
-bases:
-- ../../
+resources:
+  - ../../base
 
-# Prod-specific settings
-commonLabels:
-  environment: production
-  app.kubernetes.io/version: stable
+namespace: civicpulse
 
-commonAnnotations:
-  config.kubernetes.io/environment: production
-  deployment.kubernetes.io/tier: production
+replicas:
+  - name: civicpulse
+    count: 1
 
-# Prod patch: ensure 3 replicas of ESO for HA
-patchesStrategicMerge:
-- eso-replicas-patch.yaml
+labels:
+  - pairs:
+      environment: prod
+      lornu.ai/cluster: inert-synergies-llc
+    includeSelectors: false
 
-# Resource names
-namePrefix: prod-
-
-# Prod namespace override
-namespace: production
+# Pin a digest here before Flux applies this overlay:
+# images:
+#   - name: ghcr.io/stevei101/hack-2026-045A
+#     newTag: sha256:<digest>
