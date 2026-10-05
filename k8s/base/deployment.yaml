@@ -28,7 +28,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: civicpulse
-          image: ghcr.io/stevei101/hack-2026-045A:unreleased
+          image: ghcr.io/stevei101/hack-2026-045a:unreleased
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

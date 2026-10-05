@@ -1,6 +1,7 @@
 import L from "leaflet";
 import { useEffect } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { LEAFLET_TILES } from "../carto";
 import {
   AGENCY_LABEL,
   isMapped,
@@ -37,16 +38,33 @@ function FlyToSelection({ incident }: { incident: IncidentCard | null }) {
   return null;
 }
 
+function InvalidateOnResize() {
+  const map = useMap();
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => map.invalidateSize());
+    const observer = new ResizeObserver(() => map.invalidateSize());
+    observer.observe(map.getContainer());
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [map]);
+  return null;
+}
+
 export function IncidentMap({ incidents, selectedId, onSelect }: Props) {
   const mapped = incidents.filter(isMapped);
   const selected = incidents.find((item) => item.incident_id === selectedId) ?? null;
 
   return (
-    <MapContainer center={MAP_CENTER} zoom={MAP_ZOOM} scrollWheelZoom className="h-full w-full">
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-      />
+    <MapContainer
+      center={MAP_CENTER}
+      zoom={MAP_ZOOM}
+      scrollWheelZoom
+      className="absolute inset-0 h-full w-full"
+    >
+      <TileLayer attribution={LEAFLET_TILES.attribution} url={LEAFLET_TILES.url} />
+      <InvalidateOnResize />
       <FlyToSelection incident={selected} />
       {mapped.map((incident) => (
         <Marker

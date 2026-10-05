@@ -5,7 +5,7 @@ import { IncidentBanner } from "./components/IncidentBanner";
 import { IncidentMap } from "./components/IncidentMap";
 import { IntakeForm } from "./components/IntakeForm";
 import { TriageDrawer } from "./components/TriageDrawer";
-import { CARTO_MAP_URL } from "./carto";
+import { CARTO_MAP_URL, CARTO_ORG } from "./carto";
 import { AGENCY_LABEL, isMapped, type Austin311Context, type IncidentCard } from "./types";
 
 export default function App() {
@@ -43,10 +43,8 @@ export default function App() {
   }, [toast]);
 
   useEffect(() => {
-    if (!activeIncident) {
-      setAustin311(null);
-      return;
-    }
+    setAustin311(null);
+    if (!activeIncident) return;
     let cancelled = false;
     void fetchAustin311Context({
       category: activeIncident.category,
@@ -160,7 +158,7 @@ export default function App() {
       </aside>
 
       <main className="relative flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#243049] bg-[#0b1220] px-4 py-3">
+        <header className="relative z-30 flex flex-wrap items-center justify-between gap-3 border-b border-[#243049] bg-[#0b1220] px-4 py-3">
           <div>
             <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-teal-300">
               Interactive civic hazard intelligence
@@ -176,7 +174,7 @@ export default function App() {
             <button
               type="button"
               onClick={focusIntake}
-              className="rounded-lg bg-teal-300 px-4 py-2 text-sm font-semibold text-[#07201c]"
+              className="relative z-30 rounded-lg bg-teal-300 px-4 py-2 text-sm font-semibold text-[#07201c]"
             >
               Report hazard
             </button>
@@ -194,19 +192,32 @@ export default function App() {
 
         <IncidentBanner incident={activeIncident} context={austin311} />
 
-        <section className="relative min-h-[220px] flex-1">
-          <CartoBaseline />
-          <div className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded border border-[#243049] bg-[#0b1220]/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur">
-            <span className={`h-2 w-2 rounded-full ${CARTO_MAP_URL ? "bg-cyan-400" : "bg-amber-400"}`} />
-            <span className="font-mono text-[#c5d0e0]">
-              {CARTO_MAP_URL
-                ? "CARTO Spatial Engine: City of Austin 311 baseline locked"
-                : "CARTO Spatial Engine: awaiting public map URL"}
+        {CARTO_MAP_URL ? (
+          <section className="relative min-h-[180px] flex-1">
+            <CartoBaseline />
+            <div className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded border border-[#243049] bg-[#0b1220]/90 px-3 py-1.5 text-xs shadow-lg backdrop-blur">
+              <span className="h-2 w-2 rounded-full bg-cyan-400" />
+              <span className="font-mono text-[#c5d0e0]">
+                CARTO Cloud {CARTO_ORG.region}: 311 baseline locked
+              </span>
+            </div>
+          </section>
+        ) : (
+          <div className="flex flex-wrap items-center gap-2 border-b border-[#243049] bg-[#0b1220] px-4 py-2 text-xs text-[#c5d0e0]">
+            <span className="h-2 w-2 rounded-full bg-amber-400" />
+            <span className="font-mono">
+              CARTO Cloud {CARTO_ORG.organization} · no public map URL yet · live overlay below
             </span>
           </div>
-        </section>
+        )}
 
-        <section className="relative h-[38%] min-h-[200px] border-t border-[#243049]">
+        <section
+          className={
+            CARTO_MAP_URL
+              ? "relative h-[38%] min-h-[220px] border-t border-[#243049]"
+              : "relative min-h-0 flex-1"
+          }
+        >
           {status === "loading" ? (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#070b14]/70 text-sm text-[#c5d0e0]">
               Loading Travis and Williamson incident cache…
@@ -214,7 +225,7 @@ export default function App() {
           ) : null}
           <IncidentMap incidents={incidents} selectedId={selectedId} onSelect={selectIncident} />
           <div className="pointer-events-none absolute top-3 left-4 z-[400] rounded border border-[#243049] bg-[#0b1220]/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wide text-teal-200">
-            Live triage overlay · Leaflet delta
+            Live triage overlay · OpenStreetMap
           </div>
         </section>
       </main>
