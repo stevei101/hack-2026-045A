@@ -1,4 +1,4 @@
-import { CARTO_MAP_URL, cartoIframeSrc } from "../carto";
+import { CARTO_MAP_URL, CARTO_ORG, cartoIframeSrc } from "../carto";
 
 export function CartoBaseline() {
   const src = CARTO_MAP_URL ? cartoIframeSrc(CARTO_MAP_URL) : null;
@@ -11,10 +11,12 @@ export function CartoBaseline() {
         </p>
         <h2 className="text-lg font-semibold text-white">CARTO Builder map is not locked yet</h2>
         <p className="max-w-xl text-[#8b9bb3]">
-          Publish a Public Austin 311 map at{" "}
-          <span className="font-mono text-cyan-100">clausa.app.carto.com</span> with a category
-          widget on <span className="font-mono">sr_type_desc</span> and an H3 hexbin. Then set{" "}
-          <span className="font-mono text-cyan-100">VITE_CARTO_MAP_URL</span> to that share link.
+          Org <span className="font-mono text-cyan-100">{CARTO_ORG.organization}</span> (
+          <span className="font-mono">{CARTO_ORG.organizationId}</span>) on{" "}
+          <span className="font-mono text-cyan-100">{CARTO_ORG.domain}</span>. APIs:{" "}
+          <span className="font-mono text-cyan-100">{CARTO_ORG.apiBaseUrl}</span>. Publish a Public
+          Austin 311 map with a category widget on <span className="font-mono">sr_type_desc</span>{" "}
+          and an H3 hexbin, then set <span className="font-mono text-cyan-100">VITE_CARTO_MAP_URL</span>.
         </p>
         <p className="max-w-xl text-[#8b9bb3]">
           The iframe <span className="font-mono">src</span> stays fixed so pans and new reports do
