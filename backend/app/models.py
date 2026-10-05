@@ -45,3 +45,13 @@ class IncidentCard(BaseModel):
     longitude: float | None = Field(default=None, ge=-180.0, le=180.0)
     model_name: str = Field(..., description="Attribution of model producing extraction")
     image_attached: bool = False
+
+
+class Austin311Context(BaseModel):
+    ticket_count: int | None = Field(
+        default=None,
+        description="Live SODA count. Null when the feed is down or the category has no filter. Never invented.",
+    )
+    source: str
+    scope: Literal["nearby", "citywide_type", "unavailable"]
+    sr_type_filter: str

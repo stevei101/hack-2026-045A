@@ -9,8 +9,9 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.agent import ALLOWED_IMAGE_TYPES, extract_incident
+from app.austin311 import query_ticket_count
 from app.mock_data import demo_incidents
-from app.models import HazardInputPayload, IncidentCard
+from app.models import Austin311Context, Category, HazardInputPayload, IncidentCard
 
 FRONTEND_DIST = Path(os.environ.get("FRONTEND_DIST", Path(__file__).resolve().parents[2] / "frontend" / "dist"))
 incidents: list[IncidentCard] = demo_incidents()
@@ -56,6 +57,18 @@ def readyz() -> dict[str, str]:
 @app.get("/api/v1/incidents", response_model=list[IncidentCard])
 def list_incidents() -> list[IncidentCard]:
     return incidents
+
+
+@app.get("/api/v1/austin311/context", response_model=Austin311Context)
+def austin311_context(
+    category: Category,
+    lat: float | None = None,
+    lng: float | None = None,
+) -> Austin311Context:
+    if (lat is None) ^ (lng is None):
+        lat = None
+        lng = None
+    return query_ticket_count(category=category, lat=lat, lng=lng)
 
 
 @app.post("/api/v1/hazards/report", response_model=IncidentCard)

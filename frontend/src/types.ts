@@ -13,6 +13,15 @@ export type Agency =
   | "311_DISPATCH"
   | "EMERGENCY_SERVICES";
 
+export type Austin311Scope = "nearby" | "citywide_type" | "unavailable";
+
+export type Austin311Context = {
+  ticket_count: number | null;
+  source: string;
+  scope: Austin311Scope;
+  sr_type_filter: string;
+};
+
 export type IncidentCard = {
   incident_id: string;
   timestamp: string;
