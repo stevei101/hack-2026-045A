@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: hack-2026-root
+
+resources:
+- base/eso
+- base/flux
+
+commonLabels:
+  app.kubernetes.io/part-of: hack-2026
+  app.kubernetes.io/managed-by: kustomize
+
+commonAnnotations:
+  config.kubernetes.io/environment: development
