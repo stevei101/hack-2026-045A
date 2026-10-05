@@ -64,7 +64,7 @@ def query_ticket_count(
     where = f"({clause})"
     scope: Scope = "citywide_type"
     if lat is not None and lng is not None:
-        where = f"{where} AND {nearby_clause(lat, lng)}"
+        where = f"{where} AND ({nearby_clause(lat, lng)})"
         scope = "nearby"
 
     try:
