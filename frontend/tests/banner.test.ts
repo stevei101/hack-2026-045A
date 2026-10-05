@@ -30,9 +30,22 @@ test("uses the live nearby count instead of a hardcoded total", () => {
     scope: "nearby",
     sr_type_filter: "ELECTRICAL",
   };
-  const text = dispatchBannerText(incident, context);
+  const mapped = { ...incident, latitude: 30.3122, longitude: -97.7396 };
+  const text = dispatchBannerText(mapped, context);
   expect(text).toContain("12 nearby Austin 311 tickets");
   expect(text.includes("47 nearby")).toBe(false);
+});
+
+test("unmapped cards never keep a leftover nearby label", () => {
+  const context: Austin311Context = {
+    ticket_count: 168600,
+    source: "data.austintexas.gov/resource/xwdj-i9he",
+    scope: "nearby",
+    sr_type_filter: "ELECTRICAL",
+  };
+  const text = dispatchBannerText(incident, context);
+  expect(text).toContain("168600 matching Austin 311 tickets");
+  expect(text.includes("nearby")).toBe(false);
 });
 
 test("citywide type match is labeled as matching, not nearby", () => {

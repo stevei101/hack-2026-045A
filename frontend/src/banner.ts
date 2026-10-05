@@ -9,10 +9,11 @@ export function dispatchBannerText(
   if (!context || context.ticket_count == null) {
     return head;
   }
-  if (context.scope === "nearby") {
+  const hasGps = incident.latitude != null && incident.longitude != null;
+  if (context.scope === "nearby" && hasGps) {
     return `${head} | Cross-referenced with ${context.ticket_count} nearby Austin 311 tickets`;
   }
-  if (context.scope === "citywide_type") {
+  if (context.scope === "citywide_type" || context.scope === "nearby") {
     return `${head} | Cross-referenced with ${context.ticket_count} matching Austin 311 tickets`;
   }
   return head;
