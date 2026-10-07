@@ -1,0 +1,54 @@
+name: Tag from VERSION
+
+on:
+  push:
+    branches: [main]
+    paths: [VERSION]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create tag and release from VERSION
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          TAG=$(tr -d '[:space:]' < VERSION)
+          test -n "$TAG"
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "Release $TAG already exists"
+            exit 0
+          fi
+          NOTES=$(mktemp)
+          {
+            echo "## CivicPulse Mesh — $TAG"
+            echo
+            echo "WarriorHacks 2.0 Hackathon Track snapshot."
+            echo
+            echo "- Live draft: https://hack.oxidizedgraph.dev/"
+            echo "- Repo: https://github.com/${GITHUB_REPOSITORY}"
+            echo "- Commit: ${GITHUB_SHA}"
+            echo
+            if [[ -f CHANGELOG.md ]]; then
+              echo "### Changelog"
+              echo
+              # Emit section until next ## heading
+              awk -v tag="$TAG" '
+                $0 ~ "^## \\[" tag "\\]" {p=1; next}
+                p && /^## / {exit}
+                p {print}
+              ' CHANGELOG.md
+            fi
+          } > "$NOTES"
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$TAG — CivicPulse Mesh" \
+            --notes-file "$NOTES"
